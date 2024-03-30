@@ -1,1 +1,1 @@
-# EduSync
+# Slot-booking-web-app
