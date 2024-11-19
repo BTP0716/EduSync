@@ -21,14 +21,7 @@ function App() {
           <Spinner />
         ) : (
           <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/" element={  <ProtectedRoute> <HomePage  /> </ProtectedRoute>}/>
             <Route
               path="/apply-teacher"
               element={

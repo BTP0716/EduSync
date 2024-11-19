@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const teacherModel = require("../models/teacherModel");
 const appointmentModel = require("../models/appointmentModel");
-
+const nodemailer = require('nodemailer')
 //register callback
 const registerController = async (req, res) => {
   try {
@@ -42,7 +42,7 @@ const loginController = async (req, res) => {
     if (!isMatch) {
       return res
         .status(200)
-        .send({ message: "Invlid EMail or Password", success: false });
+        .send({ message: "Invalid Email or Password", success: false });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -79,6 +79,20 @@ const authController = async (req, res) => {
   }
 };
 
+// mail sender detail
+let transporter = nodemailer.createTransport({
+  secure: true,
+  service: 'gmail',
+  auth: {
+      user: process.env.MAIL_USERNAME_VERIFY,
+      pass: process.env.MAIL_PASSWORD_VERIFY
+  },
+  tls: {
+      rejectedUnauthorized: false
+    }
+});
+
+
 // APpply TEACHER CTRL
 const applyTeacherController = async (req, res) => {
   try {
@@ -86,6 +100,7 @@ const applyTeacherController = async (req, res) => {
     const newTeacher = await teacherModel({ ...req.body, status: "pending" });
     await newTeacher.save();
     const adminUser = await userModel.findOne({ isAdmin: true });
+    const email_admin= adminUser.email;
     const notifcation = adminUser.notifcation;
     notifcation.push({
       type: "apply-teacher-request",
@@ -96,6 +111,21 @@ const applyTeacherController = async (req, res) => {
         onClickPath: "/admin/teachers",
       },
     });
+
+    var mailoptions = {
+      from: `New Notification :<${process.env.MAIL_USERNAME_VERIFY}>`,
+      to: email_admin,
+      subject: 'New application for teacher approval',
+      html: `<h1>A new teacher approval has arrived please check into your EduSync account </h1>`
+      }
+ //send mail
+    transporter.sendMail(mailoptions, function (error, info) {
+      if (error) {
+          console.log("Error " + error);
+      } else {
+          console.log("Email sent successfully");
+      }
+          });
     await userModel.findByIdAndUpdate(adminUser._id, { notifcation });
     res.status(201).send({
       success: true,
@@ -185,12 +215,31 @@ const bookeAppointmnetController = async (req, res) => {
     const newAppointment = new appointmentModel(req.body);
     await newAppointment.save();
     const user = await userModel.findOne({ _id: req.body.teacherInfo.userId });
+    const email_teacher= user.email;
+
     user.notifcation.push({
       type: "New-appointment-request",
-      message: `A nEw Appointment Request from ${req.body.userInfo.name}`,
+      message: `A new Appointment Request from ${req.body.userInfo.name}`,
       onCLickPath: "/user/appointments",
     });
+    var mailoptions = {
+      from: `New Notification :<${process.env.MAIL_USERNAME_VERIFY}>`,
+      to: email_teacher,
+      subject: 'New application for teacher appointment',
+      html: `<h1>A new time slot approval request has arrived from 
+      ${req.body.userInfo.name}, ${req.body.userInfo.email}, ${req.body.userInfo.time}  
+      please check into your EduSync account </h1>`
+      }
+ //send mail
+    transporter.sendMail(mailoptions, function (error, info) {
+      if (error) {
+          console.log("Error " + error);
+      } else {
+          console.log("Email sent successfully");
+      }
+          });
     await user.save();
+
     res.status(200).send({
       success: true,
       message: "Appointment Book succesfully",
