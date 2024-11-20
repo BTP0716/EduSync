@@ -1,17 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
-import { Col, Form, Input, Row, TimePicker, message } from "antd";
+import { Col, Form, Input, Row, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
 import axios from "axios";
-import moment from "moment";
+
 const ApplyTeacher = () => {
   const { user } = useSelector((state) => state.user);
+  const [timings, setTimings] = useState({ startTime: "", endTime: "" });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //handle form
+
+  // Handle input change for timings
+  const handleTimingsChange = (e) => {
+    const { name, value } = e.target;
+    setTimings((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
   const handleFinish = async (values) => {
     try {
       dispatch(showLoading());
@@ -20,10 +31,7 @@ const ApplyTeacher = () => {
         {
           ...values,
           userId: user._id,
-          timings: [
-            moment(values.timings[0]).format("HH:mm"),
-            moment(values.timings[1]).format("HH:mm"),
-          ],
+          timings: [timings.startTime, timings.endTime],
         },
         {
           headers: {
@@ -41,9 +49,10 @@ const ApplyTeacher = () => {
     } catch (error) {
       dispatch(hideLoading());
       console.log(error);
-      message.error("Somthing Went Wrrong ");
+      message.error("Something went wrong");
     }
   };
+
   return (
     <Layout>
       <h1 className="text-center">Apply Teacher</h1>
@@ -57,7 +66,7 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="your first name" />
+              <Input type="text" placeholder="Your first name" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
@@ -67,7 +76,7 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="your last name" />
+              <Input type="text" placeholder="Your last name" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
@@ -77,7 +86,7 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="your contact no" />
+              <Input type="text" placeholder="Your contact no" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
@@ -87,12 +96,12 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="email" placeholder="your email address" />
+              <Input type="email" placeholder="Your email address" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
             <Form.Item label="Website" name="website">
-              <Input type="text" placeholder="your website" />
+              <Input type="text" placeholder="Your website" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
@@ -102,7 +111,7 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="your clinic address" />
+              <Input type="text" placeholder="Your clinic address" />
             </Form.Item>
           </Col>
         </Row>
@@ -115,7 +124,7 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="your specialization" />
+              <Input type="text" placeholder="Your specialization" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
@@ -125,15 +134,29 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="your experience" />
+              <Input type="text" placeholder="Your experience" />
             </Form.Item>
           </Col>
           <Col xs={24} md={24} lg={8}>
-            <Form.Item label="Timings" name="timings" required>
-              <TimePicker.RangePicker format="HH:mm" />
+            <Form.Item label="Start Time" required>
+              <Input
+                type="time"
+                name="startTime"
+                value={timings.startTime}
+                onChange={handleTimingsChange}
+              />
             </Form.Item>
           </Col>
-          <Col xs={24} md={24} lg={8}></Col>
+          <Col xs={24} md={24} lg={8}>
+            <Form.Item label="End Time" required>
+              <Input
+                type="time"
+                name="endTime"
+                value={timings.endTime}
+                onChange={handleTimingsChange}
+              />
+            </Form.Item>
+          </Col>
           <Col xs={24} md={24} lg={8}>
             <button className="btn btn-primary form-btn" type="submit">
               Submit

@@ -84,12 +84,12 @@ let transporter = nodemailer.createTransport({
   secure: true,
   service: 'gmail',
   auth: {
-      user: process.env.MAIL_USERNAME_VERIFY,
-      pass: process.env.MAIL_PASSWORD_VERIFY
+    user: process.env.MAIL_USERNAME_VERIFY,
+    pass: process.env.MAIL_PASSWORD_VERIFY
   },
   tls: {
-      rejectedUnauthorized: false
-    }
+    rejectedUnauthorized: false
+  }
 });
 
 
@@ -100,7 +100,7 @@ const applyTeacherController = async (req, res) => {
     const newTeacher = await teacherModel({ ...req.body, status: "pending" });
     await newTeacher.save();
     const adminUser = await userModel.findOne({ isAdmin: true });
-    const email_admin= adminUser.email;
+    const email_admin = adminUser.email;
     const notifcation = adminUser.notifcation;
     notifcation.push({
       type: "apply-teacher-request",
@@ -117,15 +117,15 @@ const applyTeacherController = async (req, res) => {
       to: email_admin,
       subject: 'New application for teacher approval',
       html: `<h1>A new teacher approval has arrived please check into your EduSync account </h1>`
-      }
- //send mail
+    }
+    //send mail
     transporter.sendMail(mailoptions, function (error, info) {
       if (error) {
-          console.log("Error " + error);
+        console.log("Error " + error);
       } else {
-          console.log("Email sent successfully");
+        console.log("Email sent successfully");
       }
-          });
+    });
     await userModel.findByIdAndUpdate(adminUser._id, { notifcation });
     res.status(201).send({
       success: true,
@@ -215,7 +215,7 @@ const bookeAppointmnetController = async (req, res) => {
     const newAppointment = new appointmentModel(req.body);
     await newAppointment.save();
     const user = await userModel.findOne({ _id: req.body.teacherInfo.userId });
-    const email_teacher= user.email;
+    const email_teacher = user.email;
 
     user.notifcation.push({
       type: "New-appointment-request",
@@ -229,15 +229,15 @@ const bookeAppointmnetController = async (req, res) => {
       html: `<h1>A new time slot approval request has arrived from 
       ${req.body.userInfo.name}, ${req.body.userInfo.email}, ${req.body.userInfo.time}  
       please check into your EduSync account </h1>`
-      }
- //send mail
+    }
+    //send mail
     transporter.sendMail(mailoptions, function (error, info) {
       if (error) {
-          console.log("Error " + error);
+        console.log("Error " + error);
       } else {
-          console.log("Email sent successfully");
+        console.log("Email sent successfully");
       }
-          });
+    });
     await user.save();
 
     res.status(200).send({
@@ -253,6 +253,66 @@ const bookeAppointmnetController = async (req, res) => {
     });
   }
 };
+//get appointments
+const getAppointmnetController = async (req, res) => {
+  try {
+    // Fetch all appointments from the database
+    const appointments = await appointmentModel.find();
+
+    // Send a successful response with the data
+    res.status(200).send({
+      success: true,
+      message: "Appointments fetched successfully",
+      appointments,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while fetching appointments",
+    });
+  }
+};
+//get appointments
+const confirmAppointmnetController = async (req, res) => {
+  const { app_id } = req.params;
+  try {
+    // Fetch all appointments from the database
+    const appointment = await appointmentModel.findById(app_id);
+    appointment.status = "Approved"
+    await appointment.save();
+    console.log(appointment.userId)
+    const user = await userModel.findById(appointment.userId)
+    const user_email = user.email;
+    var mailoptions = {
+      from: `New Notification :<${process.env.MAIL_USERNAME_VERIFY}>`,
+      to: user_email,
+      subject: 'Request approved',
+      html: `<h1>Your appointment has been approved</h1>`
+    }
+    //send mail
+    transporter.sendMail(mailoptions, function (error, info) {
+      if (error) {
+        console.log("Error " + error);
+      } else {
+        console.log("Email sent successfully");
+      }
+    });
+    res.status(200).send({
+      success: true,
+      message: "Appointments approved successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while fetching appointments",
+    });
+  }
+
+};
 
 module.exports = {
   loginController,
@@ -263,4 +323,6 @@ module.exports = {
   deleteAllNotificationController,
   getAllTeachersController,
   bookeAppointmnetController,
+  getAppointmnetController,
+  confirmAppointmnetController
 };
