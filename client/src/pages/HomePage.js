@@ -3,14 +3,20 @@ import axios from "axios";
 import Layout from "./../components/Layout";
 import { Row } from "antd";
 import TecacherList from "../components/TeacherList";
+import { useSelector } from "react-redux";
 const HomePage = () => {
+  const { user } = useSelector((state) => state.user);
   const [teachers, setTeachers] = useState([]);
   // login user data
+  const removeYourSelf=(teachers)=>{
+    return teachers.filter((item)=>(item.userId!=user._id))
+  }
   const getUserData = async () => {
     try {
       const res = await axios.get("/api/v1/user/getAllTeachers",{ headers: {Authorization: "Bearer " + localStorage.getItem("token"),},});
       if (res.data.success) {
-        setTeachers(res.data.data);
+        
+        setTeachers(removeYourSelf(res.data.data))
       }
     } catch (error) {
       console.log(error);

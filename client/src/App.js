@@ -12,6 +12,7 @@ import Users from "./pages/admin/Users";
 import Teachers from "./pages/admin/Teachers";
 import Profile from "./pages/teacher/Profile";
 import BookingPage from "./pages/BookingPage";
+import Profileuser from "./pages/Profileuser";
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -27,6 +28,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ApplyTeacher />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                 <Profileuser/>
                 </ProtectedRoute>
               }
             />

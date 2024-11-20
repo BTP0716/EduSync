@@ -4,7 +4,7 @@ import { adminMenu, userMenu } from "./../Data/data";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Badge, message } from "antd";
+import { Badge, Button, message } from "antd";
 const Layout = ({ children }) => {
   const { user } = useSelector((state) => state.user);
   const location = useLocation();
@@ -35,6 +35,7 @@ const Layout = ({ children }) => {
       icon: "fa-solid fa-user",
     },
   ];
+  
   // =========== teacher menu ===============
 
   // redering menu list
@@ -74,6 +75,7 @@ const Layout = ({ children }) => {
           <div className="content">
             <div className="header">
               <div className="header-content" style={{ cursor: "pointer" }}>
+              <Button style={{marginRight:"20px"}} color="primary" type="dashed" >{user?.isAdmin ? "Admin" : user?.isTeacher ? "Teacher" :"User" }</Button>
                 <Badge
                   count={user && user.notifcation.length}
                   onClick={() => {
@@ -82,8 +84,11 @@ const Layout = ({ children }) => {
                 >
                   <i class="fa-solid fa-bell"></i>
                 </Badge>
-
-                <Link to="/profile">{user?.name}</Link>
+                {
+                  user?.isTeacher ? ( <Link to={`/teacher/profile/${user._id}`}>{user?.name}</Link>)
+                  :
+                (<Link to="/profile">{user?.name}</Link>)
+                }
               </div>
             </div>
             <div className="body">{children}</div>

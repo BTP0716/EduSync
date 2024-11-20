@@ -32,7 +32,7 @@ export const adminMenu = [
   {
     name: "Teachers",
     path: "/admin/teachers",
-    icon: "fa-solid fa-user-teacher",
+    icon: "fa-solid fa-chalkboard-user",
   },
   {
     name: "Users",
