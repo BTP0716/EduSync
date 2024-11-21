@@ -62,37 +62,40 @@ const Appointments = () => {
                 {user?.isTeacher && (
                     <>
                         {/* Section: Booked by this teacher */}
-                        <h2>Appointments Booked By You</h2>
-                        <Row gutter={[16, 16]}>
-                            {bookedByUser.map(appointment => (
-                                <Col key={appointment._id} xs={24} sm={12} md={8}>
-                                    <Card
-                                        title={`Date: ${appointment.date}`}
-                                        extra={<span>Status: {appointment.status}</span>}
-                                    >
-                                        <p>Time: {appointment.time}</p>
-                                        <p>Teacher ID: {appointment.teacherId}</p>
-                                    </Card>
-                                </Col>
-                            ))}
-                        </Row>
-
+                        < h2 > Appointments Booked By You</h2>
+                        <div style={{ display: "flex", flexDirection: "column", height: "200px", overflowY: "scroll", overflowX: "hidden" }}>
+                            <Row gutter={[16, 16]}>
+                                {bookedByUser.map(appointment => (
+                                    <Col key={appointment._id} xs={24} sm={12} md={8}>
+                                        <Card
+                                            title={`Date: ${appointment.date}`}
+                                            extra={<span>Status: {appointment.status}</span>}
+                                        >
+                                            <p>Time: {appointment.time}</p>
+                                            <p>Teacher ID: {appointment.teacherId}</p>
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </div>
                         {/* Section: Appointments received */}
                         <h2>Appointments Received</h2>
-                        <Row gutter={[16, 16]}>
-                            {receivedByTeacher.map(appointment => (
-                                <Col key={appointment._id} xs={24} sm={12} md={8}>
-                                    <Card
-                                        title={`Date: ${appointment.date}`}
-                                        extra={<span>Status: {appointment.status}</span>}
-                                    >
-                                        <p>Time: {appointment.time}</p>
-                                        <p>User ID: {appointment.userId}</p>
-                                        {appointment.status === "pending" && <Button onClick={(e) => handleconfirm(e, appointment._id)} type="primary">Approve</Button>}
-                                    </Card>
-                                </Col>
-                            ))}
-                        </Row>
+                        <div style={{ display: "flex", flexDirection: "column", height: "200px", overflowY: "scroll", overflowX: "hidden" }}>
+                            <Row gutter={[16, 16]}>
+                                {receivedByTeacher.map(appointment => (
+                                    <Col key={appointment._id} xs={24} sm={12} md={8}>
+                                        <Card
+                                            title={`Date: ${appointment.date}`}
+                                            extra={<span>Status: {appointment.status}</span>}
+                                        >
+                                            <p>Time: {appointment.time}</p>
+                                            <p>User ID: {appointment.userId}</p>
+                                            {appointment.status === "pending" && <Button onClick={(e) => handleconfirm(e, appointment._id)} type="primary">Approve</Button>}
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </div>
                     </>
                 )}
 
@@ -100,23 +103,25 @@ const Appointments = () => {
                 {!user?.isTeacher && (
                     <>
                         <h2>Appointments Booked By You</h2>
-                        <Row gutter={[16, 16]}>
-                            {bookedByUser.map(appointment => (
-                                <Col key={appointment._id} xs={24} sm={12} md={8}>
-                                    <Card
-                                        title={`Date: ${appointment.date}`}
-                                        extra={<span>Status: {appointment.status}</span>}
-                                    >
-                                        <p>Time: {appointment.time}</p>
-                                        <p>Teacher ID: {appointment.teacherId}</p>
-                                    </Card>
-                                </Col>
-                            ))}
-                        </Row>
+                        <div style={{ display: "flex", flexDirection: "column", height: "500px", overflowY: "scroll", overflowX: "hidden" }}>
+                            <Row gutter={[16, 16]}>
+                                {bookedByUser.map(appointment => (
+                                    <Col key={appointment._id} xs={24} sm={12} md={8}>
+                                        <Card
+                                            title={`Date: ${appointment.date}`}
+                                            extra={<span>Status: {appointment.status}</span>}
+                                        >
+                                            <p>Time: {appointment.time}</p>
+                                            <p>Teacher ID: {appointment.teacherId}</p>
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </div>
                     </>
                 )}
             </div >
-        </Layout>
+        </Layout >
 
     )
 };
