@@ -111,7 +111,7 @@ const ApplyTeacher = () => {
               required
               rules={[{ required: true }]}
             >
-              <Input type="text" placeholder="Your clinic address" />
+              <Input type="text" placeholder="Cabin address" />
             </Form.Item>
           </Col>
         </Row>

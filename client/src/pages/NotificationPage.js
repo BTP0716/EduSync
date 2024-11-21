@@ -67,13 +67,14 @@ const NotificationPage = () => {
   return (
     <Layout>
       <h4 className="p-3 text-center">Notification Page</h4>
-      <Tabs>
+      <Tabs >
         <Tabs.TabPane tab="Unread" key={0}>
           <div className="d-flex justify-content-end">
             <h4 className="p-2" onClick={handleMarkAllRead}style={{ cursor: "pointer" }}>
               Mark All Read
             </h4>
           </div>
+          <div style={{height:"350px",overflowY:"scroll"}}>
           {user?.notifcation.map((notificationMgs) => (
             <div className="card" style={{ cursor: "pointer" }}>
               <div
@@ -84,8 +85,9 @@ const NotificationPage = () => {
               </div>
             </div>
           ))}
+          </div>
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Read" key={1}>
+        <Tabs.TabPane tab="Read" key={1} >
           <div className="d-flex justify-content-end">
             <h4
               className="p-2 text-primary"
@@ -95,8 +97,10 @@ const NotificationPage = () => {
               Delete All Read
             </h4>
           </div>
+          <div style={{height:"350px",overflowY:"scroll"}}>
           {user?.seennotification.map((notificationMgs) => (
-            <div className="card" style={{ cursor: "pointer" }}>
+            <>
+            <div className="card" style={{ cursor: "pointer",padding:'5px' }}>
               <div
                 className="card-text"
                 onClick={() => navigate(notificationMgs.onClickPath)}
@@ -104,7 +108,10 @@ const NotificationPage = () => {
                 {notificationMgs.message}
               </div>
             </div>
+              <br></br>
+              </>
           ))}
+          </div>
         </Tabs.TabPane>
       </Tabs>
     </Layout>

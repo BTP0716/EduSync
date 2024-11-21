@@ -80,22 +80,7 @@ const Appointments = () => {
                 {user?.isTeacher && (
                     <>
                         {/* Section: Booked by this teacher */}
-                        < h2 > Appointments Booked By You</h2>
-                        <div style={{ display: "flex", flexDirection: "column", height: "200px", overflowY: "scroll", overflowX: "hidden" }}>
-                            <Row gutter={[16, 16]}>
-                                {bookedByUser.map(appointment => (
-                                    <Col key={appointment._id} xs={24} sm={12} md={8}>
-                                        <Card
-                                            title={`Date: ${appointment.date}`}
-                                            extra={<strong><span>Status: {appointment.status}</span></strong>}
-                                        >
-                                            <p>Time: {appointment.time}</p>
-                                            <p>Teacher Email: {appointment?.teacherData?.email}</p>
-                                        </Card>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </div>
+                       
                         {/* Section: Appointments received */}
                         <h2>Appointments Received</h2>
                         <div style={{ display: "flex", flexDirection: "column", height: "200px", overflowY: "scroll", overflowX: "hidden" }}>
@@ -111,6 +96,23 @@ const Appointments = () => {
                                             {appointment.status === "pending" && <Button onClick={(e) => handleconfirm(e, appointment._id)} type="primary">Approve</Button>}
                                             &nbsp; &nbsp; &nbsp;
                                             {appointment.status === "pending" && <Button onClick={(e) => handledelete(e, appointment._id)} type="primary" danger>Reject</Button>}
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </div>
+                        <br></br>
+                        < h2 > Appointments Booked By You</h2>
+                        <div style={{ display: "flex", flexDirection: "column", height: "200px", overflowY: "scroll", overflowX: "hidden" }}>
+                            <Row gutter={[16, 16]}>
+                                {bookedByUser.map(appointment => (
+                                    <Col key={appointment._id} xs={24} sm={12} md={8}>
+                                        <Card
+                                            title={`Date: ${appointment.date}`}
+                                            extra={<strong><span>Status: {appointment.status}</span></strong>}
+                                        >
+                                            <p>Time: {appointment.time}</p>
+                                            <p>Teacher Email: {appointment?.teacherData?.email}</p>
                                         </Card>
                                     </Col>
                                 ))}
