@@ -70,13 +70,14 @@ const NotificationPage = () => {
       <Tabs >
         <Tabs.TabPane tab="Unread" key={0}>
           <div className="d-flex justify-content-end">
-            <h4 className="p-2" onClick={handleMarkAllRead}style={{ cursor: "pointer" }}>
+            <h4 className="p-2" onClick={handleMarkAllRead}style={{ cursor: "pointer"  }}>
               Mark All Read
             </h4>
           </div>
           <div style={{height:"350px",overflowY:"scroll"}}>
           {user?.notifcation.map((notificationMgs) => (
-            <div className="card" style={{ cursor: "pointer" }}>
+            <>
+            <div className="card" style={{ cursor: "pointer",padding:'5px' }}>
               <div
                 className="card-text"
                 onClick={() => navigate(notificationMgs.onClickPath)}
@@ -84,6 +85,8 @@ const NotificationPage = () => {
                 {notificationMgs.message}
               </div>
             </div>
+            <br></br>
+            </>
           ))}
           </div>
         </Tabs.TabPane>

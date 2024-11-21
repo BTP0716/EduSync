@@ -211,6 +211,7 @@ const getAllTeachersController = async (req, res) => {
 //BOOK APPOINTMENT
 const bookeAppointmnetController = async (req, res) => {
   try {
+    console.log(req.body.date)
     req.body.status = "pending";
     // Check for existing appointments with the same teacherId and time
     console.log(req.body)
@@ -240,9 +241,9 @@ const bookeAppointmnetController = async (req, res) => {
       from: `New Notification :<${process.env.MAIL_USERNAME_VERIFY}>`,
       to: email_teacher,
       subject: 'New application for teacher appointment',
-      html: `<h1>A new time slot approval request has arrived from 
-      ${req.body.userInfo.name}, ${req.body.userInfo.email}, ${req.body.time}  
-      please check into your EduSync account </h1>`
+      html: `<h1>You have recieved a new time slot approval request from 
+      ${req.body.userInfo.name} (${req.body.userInfo.email}) for ${req.body.date}  ${req.body.time}.    
+      Please check your EduSync account. </h1>`
     }
     //send mail
     transporter.sendMail(mailoptions, function (error, info) {

@@ -143,7 +143,7 @@ const Profile = () => {
                 required
                 rules={[{ required: true }]}
               >
-                <Input type="text" placeholder="your clinic address" />
+                <Input type="text" placeholder="Cabin address" />
               </Form.Item>
             </Col>
           </Row>
