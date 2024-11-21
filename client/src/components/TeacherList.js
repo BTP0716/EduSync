@@ -11,16 +11,20 @@ const TeacherList = ({ teacher }) => {
         </div>
         <div className="card-body">
           <p>
-            <b>Email</b> {teacher.email}
+            <b>Email:</b> {teacher.email}
+          </p>
+
+          <p>
+            <b>Specialization:</b> {teacher.specialization}
           </p>
           <p>
-            <b>Specialization</b> {teacher.specialization}
+            <b>Experience:</b> {teacher.experience}
           </p>
           <p>
-            <b>Experience</b> {teacher.experience}
+            <b>Address:</b> {teacher.address}
           </p>
           <p>
-            <b>Timings</b> {teacher.timings[0]} - {teacher.timings[1]}
+            <b>Timings:</b> {teacher.timings[0]} - {teacher.timings[1]}
           </p>
         </div>
       </div>
