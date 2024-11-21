@@ -34,7 +34,6 @@ const BookingPage = () => {
       console.log(error);
     }
   };
-
   // Handle booking functionality
   const handleBooking = async () => {
     try {
@@ -56,12 +55,10 @@ const BookingPage = () => {
         }
       );
       dispatch(hideLoading());
-      if (res.data.success) {
-        message.success(res.data.message);
-      }
+      message.info(res.data.message);
+
     } catch (error) {
       dispatch(hideLoading());
-      console.log(error);
     }
   };
 
@@ -84,12 +81,11 @@ const BookingPage = () => {
               {teachers.timings && teachers.timings[1]}
             </h4>
             <div className="d-flex flex-column w-50">
-              <DatePicker
-                className="m-2"
-                format="DD-MM-YYYY"
-                onChange={(value) =>
-                  setDate(moment(value).format("DD-MM-YYYY"))
-                }
+              <input
+                type="date"
+                className="form-control m-2"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
               />
               <label htmlFor="time" className="m-2">
                 Select Time:

@@ -47,6 +47,24 @@ const Appointments = () => {
             message.error("Something went wrong while fetching appointments.");
         }
     }
+    const handledelete = async (e, id) => {
+        try {
+            const res = await axios.patch(`/api/v1/user/delete-appointment/${id}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            if (res.data.success) {
+                message.success("request rejected");
+                fetchAppointments();
+            } else {
+                message.error("some error occured");
+            }
+        } catch (error) {
+            console.log(error);
+            message.error("Something went wrong while fetching appointments.");
+        }
+    }
     useEffect(() => {
         fetchAppointments();
     }, []);
@@ -69,10 +87,10 @@ const Appointments = () => {
                                     <Col key={appointment._id} xs={24} sm={12} md={8}>
                                         <Card
                                             title={`Date: ${appointment.date}`}
-                                            extra={<span>Status: {appointment.status}</span>}
+                                            extra={<strong><span>Status: {appointment.status}</span></strong>}
                                         >
                                             <p>Time: {appointment.time}</p>
-                                            <p>Teacher ID: {appointment.teacherId}</p>
+                                            <p>Teacher Email: {appointment?.teacherData?.email}</p>
                                         </Card>
                                     </Col>
                                 ))}
@@ -86,11 +104,13 @@ const Appointments = () => {
                                     <Col key={appointment._id} xs={24} sm={12} md={8}>
                                         <Card
                                             title={`Date: ${appointment.date}`}
-                                            extra={<span>Status: {appointment.status}</span>}
+                                            extra={<strong><span>Status: {appointment.status}</span></strong>}
                                         >
                                             <p>Time: {appointment.time}</p>
-                                            <p>User ID: {appointment.userId}</p>
+                                            <p>User Email: {appointment?.userData?.email}</p>
                                             {appointment.status === "pending" && <Button onClick={(e) => handleconfirm(e, appointment._id)} type="primary">Approve</Button>}
+                                            &nbsp; &nbsp; &nbsp;
+                                            {appointment.status === "pending" && <Button onClick={(e) => handledelete(e, appointment._id)} type="primary" danger>Reject</Button>}
                                         </Card>
                                     </Col>
                                 ))}
@@ -109,10 +129,10 @@ const Appointments = () => {
                                     <Col key={appointment._id} xs={24} sm={12} md={8}>
                                         <Card
                                             title={`Date: ${appointment.date}`}
-                                            extra={<span>Status: {appointment.status}</span>}
+                                            extra={<strong><span>Status: {appointment.status}</span></strong>}
                                         >
                                             <p>Time: {appointment.time}</p>
-                                            <p>Teacher ID: {appointment.teacherId}</p>
+                                            <p>Teacher Email: {appointment?.teacherData?.email}</p>
                                         </Card>
                                     </Col>
                                 ))}

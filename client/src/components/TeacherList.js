@@ -11,6 +11,9 @@ const TeacherList = ({ teacher }) => {
         </div>
         <div className="card-body">
           <p>
+            <b>Email</b> {teacher.email}
+          </p>
+          <p>
             <b>Specialization</b> {teacher.specialization}
           </p>
           <p>

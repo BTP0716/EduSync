@@ -212,11 +212,25 @@ const getAllTeachersController = async (req, res) => {
 const bookeAppointmnetController = async (req, res) => {
   try {
     req.body.status = "pending";
+    // Check for existing appointments with the same teacherId and time
+    console.log(req.body)
+    const existingAppointment = await appointmentModel.findOne({
+      teacherId: req.body.teacherId,
+      time: req.body.time,
+      date: req.body.date,
+    });
+    console.log(existingAppointment)
+    if (existingAppointment) {
+      return res.status(200).send({
+        success: false,
+        message: "This time slot is already booked. Please choose a different time.",
+      });
+    }
     const newAppointment = new appointmentModel(req.body);
     await newAppointment.save();
     const user = await userModel.findOne({ _id: req.body.teacherInfo.userId });
     const email_teacher = user.email;
-
+    console.log(req.body)
     user.notifcation.push({
       type: "New-appointment-request",
       message: `A new Appointment Request from ${req.body.userInfo.name}`,
@@ -227,7 +241,7 @@ const bookeAppointmnetController = async (req, res) => {
       to: email_teacher,
       subject: 'New application for teacher appointment',
       html: `<h1>A new time slot approval request has arrived from 
-      ${req.body.userInfo.name}, ${req.body.userInfo.email}, ${req.body.userInfo.time}  
+      ${req.body.userInfo.name}, ${req.body.userInfo.email}, ${req.body.time}  
       please check into your EduSync account </h1>`
     }
     //send mail
@@ -253,27 +267,41 @@ const bookeAppointmnetController = async (req, res) => {
     });
   }
 };
-//get appointments
 const getAppointmnetController = async (req, res) => {
   try {
     // Fetch all appointments from the database
     const appointments = await appointmentModel.find();
 
-    // Send a successful response with the data
+    // Enrich each appointment with user and teacher data
+    const enrichedAppointments = await Promise.all(
+      appointments.map(async (appointment) => {
+        const userData = await userModel.findById(appointment.userId).lean();
+        const teacherData = await teacherModel.findOne({ userId: appointment.teacherId }).lean();
+
+        return {
+          ...appointment.toObject(), // Convert Mongoose document to plain object
+          userData,
+          teacherData,
+        };
+      })
+    );
+
+    // Send a successful response with the enriched data
     res.status(200).send({
       success: true,
-      message: "Appointments fetched successfully",
-      appointments,
+      message: "Appointments fetched and enriched successfully",
+      appointments: enrichedAppointments,
     });
   } catch (error) {
     console.error(error);
     res.status(500).send({
       success: false,
       error,
-      message: "Error while fetching appointments",
+      message: "Error while fetching and enriching appointments",
     });
   }
 };
+
 //get appointments
 const confirmAppointmnetController = async (req, res) => {
   const { app_id } = req.params;
@@ -288,7 +316,7 @@ const confirmAppointmnetController = async (req, res) => {
     var mailoptions = {
       from: `New Notification :<${process.env.MAIL_USERNAME_VERIFY}>`,
       to: user_email,
-      subject: 'Request approved',
+      subject: 'Request Confirmation',
       html: `<h1>Your appointment has been approved</h1>`
     }
     //send mail
@@ -313,7 +341,43 @@ const confirmAppointmnetController = async (req, res) => {
   }
 
 };
+const deleteAppointmnetController = async (req, res) => {
+  const { app_id } = req.params;
+  try {
+    // Fetch all appointments from the database
+    const appointment = await appointmentModel.findById(app_id);
+    appointment.status = "Rejected"
+    await appointment.save();
+    const user = await userModel.findById(appointment.userId)
+    const user_email = user.email;
+    var mailoptions = {
+      from: `New Notification :<${process.env.MAIL_USERNAME_VERIFY}>`,
+      to: user_email,
+      subject: 'Request Confirmation',
+      html: `<h1>Your appointment has been Rejected</h1>`
+    }
+    //send mail
+    transporter.sendMail(mailoptions, function (error, info) {
+      if (error) {
+        console.log("Error " + error);
+      } else {
+        console.log("Email sent successfully");
+      }
+    });
+    res.status(200).send({
+      success: true,
+      message: "Appointments approved successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error while fetching appointments",
+    });
+  }
 
+};
 module.exports = {
   loginController,
   registerController,
@@ -324,5 +388,6 @@ module.exports = {
   getAllTeachersController,
   bookeAppointmnetController,
   getAppointmnetController,
-  confirmAppointmnetController
+  confirmAppointmnetController,
+  deleteAppointmnetController
 };
